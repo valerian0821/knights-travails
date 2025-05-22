@@ -136,4 +136,74 @@ class Graph {
     }
     return currentNode;
   }
+
+  knightMoves(startCoord, endCoord) {
+    if (startCoord[0] === endCoord[0] && startCoord[1] === endCoord[1]) {
+      return [startCoord];
+    }
+    let currentNode = this.start;
+    let moves = 0;
+    let levelSize = 1;
+    const queue = [[startCoord]];
+    while (queue.length > 0 && moves < 6) {
+      const seq = queue.shift();
+      levelSize--;
+      const lastCoord = seq.pop();
+      while (currentNode.x !== lastCoord[0]) {
+        if (currentNode.x > lastCoord[0]) {
+          currentNode = currentNode.left;
+        } else {
+          currentNode = currentNode.right;
+        }
+      }
+      while (currentNode.y !== lastCoord[1]) {
+        if (currentNode.y > lastCoord[1]) {
+          currentNode = currentNode.down;
+        } else {
+          currentNode = currentNode.up;
+        }
+      }
+      seq.push(lastCoord);
+
+      const knightMoves = [
+        { dx:  1, dy:  2, prop: 'upUpRight' },
+        { dx:  2, dy:  1, prop: 'rightRightUp' },
+        { dx:  2, dy: -1, prop: 'rightRightDown' },
+        { dx:  1, dy: -2, prop: 'downDownRight' },
+        { dx: -1, dy: -2, prop: 'downDownLeft' },
+        { dx: -2, dy: -1, prop: 'leftLeftDown' },
+        { dx: -2, dy:  1, prop: 'leftLeftUp' },
+        { dx: -1, dy:  2, prop: 'upUpLeft' },
+      ];
+
+      for (const move of knightMoves) {
+        const nextCoord = [currentNode.x + move.dx, currentNode.y + move.dy];
+        const nextNode = currentNode[move.prop];
+
+        if (nextNode !== null && !this.checkRepeatSquare(nextCoord, seq)) {
+          seq.push(nextCoord);
+          if (nextCoord[0] === endCoord[0] && nextCoord[1] === endCoord[1]) {
+            return seq;
+          }
+          queue.push([...seq]);
+          seq.pop();
+        }
+      }
+      if (levelSize === 0) {
+        levelSize = queue.length;
+        if (queue.length > 0) {
+          moves++;
+        }
+      }
+    }
+  }
+
+  checkRepeatSquare(coord, seq) {
+    for (let i = 0; i < seq.length; i++) {
+      if (coord[0] === seq[i][0] && coord[1] === seq[i][1]) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
