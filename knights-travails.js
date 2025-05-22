@@ -138,6 +138,9 @@ class Graph {
   }
 
   knightMoves(startCoord, endCoord) {
+    if (!this.isValidCoord(startCoord) || !this.isValidCoord(endCoord)) {
+      throw new Error("Coordinates are not valid");
+    }
     if (startCoord[0] === endCoord[0] && startCoord[1] === endCoord[1]) {
       return [startCoord];
     }
@@ -149,6 +152,7 @@ class Graph {
       const seq = queue.shift();
       levelSize--;
       const lastCoord = seq.pop();
+      currentNode = this.start;
       while (currentNode.x !== lastCoord[0]) {
         if (currentNode.x > lastCoord[0]) {
           currentNode = currentNode.left;
@@ -196,6 +200,7 @@ class Graph {
         }
       }
     }
+    return null;
   }
 
   checkRepeatSquare(coord, seq) {
@@ -206,4 +211,24 @@ class Graph {
     }
     return false;
   }
+
+  isValidCoord(coord) {
+    return (
+      Array.isArray(coord) &&
+      coord.length === 2 &&
+      Number.isInteger(coord[0]) &&
+      Number.isInteger(coord[1]) &&
+      coord[0] >= 0 && coord[0] <= 7 &&
+      coord[1] >= 0 && coord[1] <= 7
+    );
+  }
 }
+
+let board = new Graph();
+// console.log(board.knightMoves([0, 0], [0, 0]));
+// console.log(board.knightMoves([3, 3], [3, 3]));
+// console.log(board.knightMoves([3, 3], [4, 3]));
+// console.log(board.knightMoves([0, 0], [1, 2]));
+// console.log(board.knightMoves([0, 0], [7, 7]));
+// console.log(board.knightMoves([7, 0], [0, 7]));
+console.log(board.knightMoves([7, 0], [0, 6]));
